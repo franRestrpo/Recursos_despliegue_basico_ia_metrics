@@ -1,0 +1,133 @@
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: always
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.prometheus.rule=Host(`prometheus.localhost`)
+      - traefik.http.routers.prometheus.entrypoints=web
+    networks:
+      - n8n_evoapi
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: always
+    ports:
+      - "3003:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GF_SECURITY_ADMIN_PASSWORD}
+    volumes:
+      - grafana_data:/var/lib/grafana
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.grafana.rule=Host(`grafana.localhost`)
+      - traefik.http.routers.grafana.entrypoints=web
+    networks:
+      - n8n_evoapi
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    restart: always
+    ports:
+      - "9100:9100"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    networks:
+      - n8n_evoapi
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    restart: always
+    ports:
+      - "8081:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    devices:
+      - /dev/kmsg
+    networks:
+      - n8n_evoapi
+
+  postgres-exporter-n8n:
+    image: prometheuscommunity/postgres-exporter:latest
+    container_name: postgres-exporter-n8n
+    restart: always
+    environment:
+      - DATA_SOURCE_NAME=${DATA_SOURCE_NAME_N8N}
+    ports:
+      - "9187:9187"
+    networks:
+      - n8n_evoapi
+
+  redis-exporter-n8n:
+    image: oliver006/redis_exporter:latest
+    container_name: redis-exporter-n8n
+    restart: always
+    environment:
+      - REDIS_ADDR=${REDIS_ADDR_N8N}
+      - REDIS_PASSWORD=${REDIS_PASSWORD_N8N}
+    ports:
+      - "9121:9121"
+    networks:
+      - n8n_evoapi
+
+  postgres-exporter-evo:
+    image: prometheuscommunity/postgres-exporter:latest
+    container_name: postgres-exporter-evo
+    restart: always
+    environment:
+      - DATA_SOURCE_NAME=${DATA_SOURCE_NAME_EVO}
+    ports:
+      - "9188:9187"
+    networks:
+      - n8n_evoapi
+
+  redis-exporter-evo:
+    image: oliver006/redis_exporter:latest
+    container_name: redis-exporter-evo
+    restart: always
+    environment:
+      - REDIS_ADDR=${REDIS_ADDR_EVO}
+      - REDIS_PASSWORD=${REDIS_PASSWORD_EVO}
+    ports:
+      - "9122:9121"
+    networks:
+      - n8n_evoapi
+
+  postgres-exporter-utilidades:
+    image: prometheuscommunity/postgres-exporter:latest
+    container_name: postgres-exporter-utilidades
+    restart: always
+    environment:
+      - DATA_SOURCE_NAME=${DATA_SOURCE_NAME_UTILIDADES}
+    ports:
+      - "9189:9187"
+    networks:
+      - n8n_evoapi
+
+networks:
+  n8n_evoapi:
+    external: true
+
+volumes:
+  prometheus_data:
+  grafana_data:

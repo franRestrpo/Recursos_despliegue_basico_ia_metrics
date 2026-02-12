@@ -1,0 +1,41 @@
+tunnel: midominio-tunnel
+credentials-file: /etc/cloudflared/creds.json
+ingress:
+  # Chatwoot - Acceso público con Zero Trust
+  - hostname: chatwoot.midominio.com
+    service: http://chatwoot:3000
+    originRequest:
+      noTLSVerify: true
+
+  # Evolution API - Solo Zero Trust
+  - hostname: api.midominio.com
+    service: http://evolution_api:8080
+    originRequest:
+      noTLSVerify: true
+
+  # Open WebUI - Solo Zero Trust
+  - hostname: webui.midominio.com
+    service: http://open-webui:8080
+    originRequest:
+      noTLSVerify: true
+
+  # Grafana - Solo Zero Trust
+  - hostname: monitoring.midominio.com
+    service: http://grafana:3000
+    originRequest:
+      noTLSVerify: true
+
+  # Prometheus - Solo Zero Trust
+  - hostname: metrics.midominio.com
+    service: http://prometheus:9090
+    originRequest:
+      noTLSVerify: true
+
+  # N8N - Solo Zero Trust
+  - hostname: n8n.midominio.com
+    service: http://n8n:5678
+    originRequest:
+      noTLSVerify: true
+
+  # Catch-all rule
+  - service: http_status:404

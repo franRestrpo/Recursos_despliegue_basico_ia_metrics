@@ -1,0 +1,59 @@
+# Environment variables
+.env
+*/.env
+
+# Logs
+logs/
+*.log
+
+# Docker volumes (if any local)
+volumes/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+tmp/
+temp/
+
+# Node modules (if any)
+node_modules/
+
+# Database files (if any local)
+*.db
+*.sqlite
+*.sqlite3
+
+# Backup files
+*.bak
+*.backup
+
+# Docker data volumes
+utilidades/postgres_data/
+utilidades/open-webui/
+utilidades/qdrant_storage/
+n8n_files/n8n_data/
+n8n_files/local-files/
+n8n_files/letsencrypt/
+evoapi_files/postgres_data/
+chatwoot_files/chatwoot_files/storage/
+
+# Legacy / Redundant entries
+# open-webui/
+# postgre_data/
+# qdrant_storage/
+
+# Generated files
+**/package-lock.json

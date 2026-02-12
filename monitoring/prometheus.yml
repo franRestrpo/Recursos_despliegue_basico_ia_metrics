@@ -1,0 +1,40 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
+
+  - job_name: 'postgres-exporter-n8n'
+    static_configs:
+      - targets: ['postgres-exporter-n8n:9187']
+
+  - job_name: 'redis-exporter-n8n'
+    static_configs:
+      - targets: ['redis-exporter-n8n:9121']
+
+  - job_name: 'postgres-exporter-evo'
+    static_configs:
+      - targets: ['postgres-exporter-evo:9187']
+
+  - job_name: 'redis-exporter-evo'
+    static_configs:
+      - targets: ['redis-exporter-evo:9121']
+
+  - job_name: 'n8n'
+    static_configs:
+      - targets: ['n8n_files-n8n-1:5678']
+    metrics_path: '/metrics'
+
+  - job_name: 'postgres-exporter-utilidades'
+    static_configs:
+      - targets: ['postgres-exporter-utilidades:9187']

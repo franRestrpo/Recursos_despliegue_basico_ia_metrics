@@ -1,0 +1,63 @@
+services:
+  postgres:
+    image: ${POSTGRES_IMAGE}
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+    networks: ['n8n_evoapi']
+
+  open-webui:
+    image: ${OPEN_WEBUI_IMAGE}
+    networks: ['n8n_evoapi']
+    restart: unless-stopped
+    container_name: open-webui
+    env_file: .env
+    ports:
+      - "${OPEN_WEBUI_PORT}:8080"
+    extra_hosts:
+      - "host.docker.internal:${IP_LOCAL}"
+    volumes:
+      - ./open-webui:/app/backend/data
+
+  qdrant:
+    image: ${QDRANT_IMAGE}
+    container_name: qdrant
+    networks: ['n8n_evoapi']
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "${QDRANT_PORT}:6333"
+      - "${QDRANT_GRPC_PORT}:6334"
+    extra_hosts:
+      - "host.docker.internal:${IP_LOCAL}"
+    volumes:
+      - ./qdrant_storage:/qdrant/storage
+
+  pinecone:
+    image: ${PINECONE_IMAGE}
+    container_name: dense-index
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "${PINECONE_PORT}:${PINECONE_PORT}"
+    platform: linux/amd64
+    networks: ['n8n_evoapi']
+
+  cloudflared:
+    image: ${CLOUDFLARED_IMAGE}
+    container_name: cloudflared
+    restart: always
+    env_file: .env
+    command: tunnel run --token ${CLOUDFLARE_TUNNEL_TOKEN}
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
+    networks: ['n8n_evoapi']
+
+networks:
+  n8n_evoapi:
+    external: true
+
+volumes:
+  n8n_data:
+  cloudflared_creds:
